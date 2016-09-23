@@ -1,0 +1,20 @@
+{
+  "name": "bundlebus-client",
+  "version": "0.0.2",
+  "description": "React-native effective updater client with BundleBus backend",
+  "main": "bundlebus.js",
+  "keywords": [
+    "BundleBus",
+    "react-native"
+  ],
+  "author": "ZENOME Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zenome/BundleBus_client"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
