@@ -16,7 +16,7 @@ will be updated soon
 
 
 #### Android ####
-- In `android/settings.grale`
+- In `android/settings.gradle`
 ~~~~
 ...
 include ':bundlebus-client'
