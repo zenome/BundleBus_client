@@ -3,7 +3,7 @@ BundleBus client library. This library will download the newest bundle from Bund
 
 ## How to install ##
 ~~~~
-> npm install BundleBus-client --save
+> npm install bundlebus-client --save
 ~~~~
 
 ## Usage ##
