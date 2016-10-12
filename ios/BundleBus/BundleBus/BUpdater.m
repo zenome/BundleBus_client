@@ -40,6 +40,7 @@
 @property (nonatomic, strong) BBundle *bundle;
 @property (nonatomic, strong) BResource *resource;
 @property (nonatomic, strong) BStorage *storage;
+@property (nonatomic) BOOL bSetupLink;
 @end
 
 
@@ -47,7 +48,7 @@
 @synthesize bundle;
 @synthesize resource;
 @synthesize storage;
-
+@synthesize bSetupLink;
 
 #pragma mark - Public
 - (void)silentUpdate:(NSString *)paramAppkey {
@@ -65,13 +66,47 @@
     NSString *srcPath = [[BConfig getBasePath] stringByAppendingPathComponent:paramAppkey];
     srcPath = [srcPath stringByAppendingPathComponent:@"bundle.link"];
     
-    NSError *error;
-    NSString *strDst = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath:srcPath error:&error];
-    if([[NSFileManager defaultManager] fileExistsAtPath:strDst]) {
-        return srcPath;
-    }
-    else {
+    NSMutableArray* array_bundles = [self.storage getBundleinfoByAppKey:paramAppkey];
+    NSLog(@"%@", array_bundles);
+    if([array_bundles count] == 0) {    // insert
         return nil;
+    }
+    else {    // update
+        if(!bSetupLink) {
+            NSMutableDictionary *bundleinfo = [array_bundles objectAtIndex:0];
+            NSString *dstpath = [[BConfig getBasePath] stringByAppendingPathComponent:paramAppkey];
+            dstpath = [dstpath stringByAppendingPathComponent:@"tmp"];
+            dstpath = [dstpath stringByAppendingPathComponent:@"download"];
+            dstpath = [dstpath stringByAppendingPathComponent:[bundleinfo objectForKey:@"appversion"]];
+            
+            dstpath = [dstpath stringByAppendingPathComponent:[NSString stringWithFormat:@"build_%@", [bundleinfo objectForKey:@"timestamp"]]];
+            dstpath = [dstpath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.bundle", [bundleinfo objectForKey:@"timestamp"]]];
+            
+            NSError *error = nil;
+            BOOL bResult = [[NSFileManager defaultManager] removeItemAtPath:srcPath error:&error];
+            if(error) {
+                NSLog(@"%@", error);
+                //NSAssert(false, @"failed to createSymbolicLinkAtPath:srcPath withDestinationPath:dstpath error:&error];");
+            }
+            
+            error = nil;
+            bResult = [[NSFileManager defaultManager] createSymbolicLinkAtPath:srcPath withDestinationPath:dstpath error:&error];
+            if(error) {
+                NSLog(@"%@", error);
+                //NSAssert(false, @"failed to createSymbolicLinkAtPath:srcPath withDestinationPath:dstpath error:&error];");
+            }
+            
+            bSetupLink = TRUE;
+        }
+        
+        NSError *error = nil;
+        NSString *strDst = [[NSFileManager defaultManager] destinationOfSymbolicLinkAtPath:srcPath error:&error];
+        if([[NSFileManager defaultManager] fileExistsAtPath:strDst]) {
+            return srcPath;
+        }
+        else {
+            return nil;
+        }
     }
 }
 
@@ -108,6 +143,7 @@
     // check if database file is available.
     
     // check if tables are available.
+    self.bSetupLink = FALSE;
     
     return self;
 }
