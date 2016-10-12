@@ -83,7 +83,7 @@
 - (void)configServerAddressAndPort:(NSString *)paramAddress port:(NSInteger)paramPort {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:paramAddress forKey:@"serverAddress"];
-    [defaults setInteger:paramPort forKey:@"sercverPort"];
+    [defaults setInteger:paramPort forKey:@"serverPort"];
     [defaults synchronize];
 }
 
